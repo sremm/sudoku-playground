@@ -19,9 +19,21 @@ class SudokuBoard:
         return str(self._board_state)
 
     @property
+    def num_rows(self):
+        return self._allowed_board_shape[0]
+
+    @property
+    def num_cols(self):
+        return self._allowed_board_shape[1]
+
+    @property
+    def _max_row_sum(self) -> int:
+        return np.sum(self._allowed_numbers)
+
+    @property
     def state_is_valid(self) -> bool:
         result = False
-        max_sum = np.sum(self._allowed_numbers)
+        max_sum = self._max_row_sum
         # # check rows are valid
 
         rows_sum_within_range = np.sum(self._board_state, axis=0) <= max_sum
@@ -72,4 +84,10 @@ class SudokuBoard:
             )
         )
 
+        return result
+
+    @property
+    def is_solved(self) -> bool:
+        values_sum_is_correct = np.sum(self._board_state) == (self._max_row_sum * self.num_rows)
+        result = values_sum_is_correct and self.state_is_valid
         return result
