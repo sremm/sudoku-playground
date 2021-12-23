@@ -18,6 +18,28 @@ class TestBoardState:
             np.array(
                 [
                     [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                    [4, 5, 6, 7, 8, 9, 1, 2, 3],
+                    [7, 8, 9, 1, 2, 3, 4, 5, 6],
+                    [2, 3, 4, 5, 6, 7, 8, 9, 1],
+                    [5, 6, 7, 8, 9, 1, 2, 3, 4],
+                    [8, 9, 1, 2, 3, 4, 5, 6, 7],
+                    [3, 4, 5, 6, 7, 8, 9, 1, 2],
+                    [6, 7, 8, 9, 1, 2, 3, 4, 5],
+                    [9, 1, 2, 3, 4, 5, 6, 7, 8],
+                ]
+            )
+        )
+        assert board.state_is_valid == True
+
+    def test_state_is_invalid_duplicates(self):
+        board = SudokuBoard(np.ones((9, 9)))
+        assert board.state_is_valid == False
+
+    def test_state_is_invalid_square_constraint_not_fulfilled(self):
+        board = SudokuBoard(
+            np.array(
+                [
+                    [1, 2, 3, 4, 5, 6, 7, 8, 9],
                     [2, 3, 4, 5, 6, 7, 8, 9, 1],
                     [3, 4, 5, 6, 7, 8, 9, 1, 2],
                     [4, 5, 6, 7, 8, 9, 1, 2, 3],
@@ -29,10 +51,6 @@ class TestBoardState:
                 ]
             )
         )
-        assert board.state_is_valid == True
-
-    def test_state_is_invalid(self):
-        board = SudokuBoard(np.ones((9, 9)))
         assert board.state_is_valid == False
 
 
@@ -41,13 +59,13 @@ def test_board_is_solved():
         np.array(
             [
                 [1, 2, 3, 4, 5, 6, 7, 8, 9],
-                [2, 3, 4, 5, 6, 7, 8, 9, 1],
-                [3, 4, 5, 6, 7, 8, 9, 1, 2],
                 [4, 5, 6, 7, 8, 9, 1, 2, 3],
-                [5, 6, 7, 8, 9, 1, 2, 3, 4],
-                [6, 7, 8, 9, 1, 2, 3, 4, 5],
                 [7, 8, 9, 1, 2, 3, 4, 5, 6],
+                [2, 3, 4, 5, 6, 7, 8, 9, 1],
+                [5, 6, 7, 8, 9, 1, 2, 3, 4],
                 [8, 9, 1, 2, 3, 4, 5, 6, 7],
+                [3, 4, 5, 6, 7, 8, 9, 1, 2],
+                [6, 7, 8, 9, 1, 2, 3, 4, 5],
                 [9, 1, 2, 3, 4, 5, 6, 7, 8],
             ]
         )

@@ -71,6 +71,39 @@ class SudokuBoard:
             cols_have_only_allowed_values.append(only_allowed_values)
             cols_have_no_duplicates.append(no_duplicates)
 
+        ## check that all boxes are valid
+        boxes_sum_within_range = []
+        boxes_have_no_duplicates = []
+        boxes_have_only_allowed_values = []
+
+        box_shape = (3, 3)  # could compute from self._board_shape
+        box_h, box_w = (3, 3)
+        num_box_rows = 3
+        num_box_cols = 3
+        for box_row_id in range(num_box_rows):
+            for box_col_id in range(num_box_cols):
+                only_allowed_values = True
+                no_duplicates = True
+
+                box_values = self._board_state[
+                    box_row_id * num_box_rows : (box_row_id + 1) * num_box_rows,
+                    box_col_id * num_box_cols : (box_col_id + 1) * num_box_cols,
+                ]
+                box_sum_within_range = np.sum(box_values) <= max_sum
+
+                values, counts = np.unique(box_values, return_counts=True)
+                for val in values:
+                    if val not in self._allowed_numbers:
+                        only_allowed_values == False
+                        break
+                if np.all(counts == 1) == False:
+                    no_duplicates = False
+
+                boxes_sum_within_range.append(box_sum_within_range)
+                boxes_have_no_duplicates.append(no_duplicates)
+                boxes_have_only_allowed_values.append(only_allowed_values)
+
+        ## check that all is well
         result = bool(
             np.all(
                 [
@@ -80,6 +113,9 @@ class SudokuBoard:
                     cols_sum_within_range,
                     cols_have_only_allowed_values,
                     cols_have_no_duplicates,
+                    boxes_sum_within_range,
+                    boxes_have_only_allowed_values,
+                    boxes_have_no_duplicates,
                 ],
             )
         )
