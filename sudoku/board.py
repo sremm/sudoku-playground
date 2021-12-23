@@ -7,9 +7,12 @@ class BoardShapeError(Exception):
 
 
 class SudokuBoard:
+    _allowed_board_shape = (9, 9)
+    _allowed_numbers = (1, 2, 3, 4, 5, 6, 7, 8, 9)
+
     def __init__(self, board_state: np.ndarray):
-        if board_state.shape != (9, 9):
-            raise BoardShapeError(f"Board should be of shape (9, 9), but was {board_state.shape}")
+        if board_state.shape != self._allowed_board_shape:
+            raise BoardShapeError(f"Board should be of shape {self._allowed_board_shape}, but was {board_state.shape}")
         self._board_state = board_state
 
     def __str__(self) -> str:
@@ -18,8 +21,7 @@ class SudokuBoard:
     @property
     def state_is_valid(self) -> bool:
         result = False
-        allowed_numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-        max_sum = np.sum(allowed_numbers)
+        max_sum = np.sum(self._allowed_numbers)
         # # check rows are valid
 
         rows_sum_within_range = np.sum(self._board_state, axis=0) <= max_sum
@@ -31,7 +33,7 @@ class SudokuBoard:
             row = self._board_state[idx, :]
             values, counts = np.unique(row, return_counts=True)
             for val in values:
-                if val not in allowed_numbers:
+                if val not in self._allowed_numbers:
                     only_allowed_values == False
                     break
             if np.all(counts == 1) == False:
@@ -49,7 +51,7 @@ class SudokuBoard:
             col = self._board_state[:, idx]
             values, counts = np.unique(col, return_counts=True)
             for val in values:
-                if val not in allowed_numbers:
+                if val not in self._allowed_numbers:
                     only_allowed_values == False
                     break
             if np.all(counts == 1) == False:
