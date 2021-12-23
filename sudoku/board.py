@@ -8,7 +8,7 @@ class BoardShapeError(Exception):
 
 class SudokuBoard:
     _allowed_board_shape = (9, 9)
-    _allowed_numbers = (1, 2, 3, 4, 5, 6, 7, 8, 9)
+    _allowed_numbers = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)  # 0 represents empty box
 
     def __init__(self, board_state: np.ndarray):
         if board_state.shape != self._allowed_board_shape:
