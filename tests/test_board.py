@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+
 from sudoku.board import BoardShapeError, SudokuBoard
 
 

@@ -1,10 +1,11 @@
 import numpy as np
+
 from sudoku.board import SudokuBoard
 from sudoku.solver import SudokuSolver
 
 
 class TestSudokuSolver:
-    def test_simple_board(self):
+    def test_simple_board_1_missing(self):
         board = SudokuBoard(
             np.array(
                 [
@@ -20,6 +21,6 @@ class TestSudokuSolver:
                 ]
             )
         )
-        result = SudokuSolver.solve(board)
-        assert result.state_is_valid == True
-        assert result.is_solved == True
+        result_board, result_message = SudokuSolver.solve(board)
+        assert result_board.state_is_valid == True
+        assert result_board.is_solved == True

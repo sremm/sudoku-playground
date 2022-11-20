@@ -1,4 +1,6 @@
 """ Includes the definition for the game board """
+from typing import Dict
+
 import numpy as np
 
 
@@ -14,6 +16,7 @@ class SudokuBoard:
         if board_state.shape != self._allowed_board_shape:
             raise BoardShapeError(f"Board should be of shape {self._allowed_board_shape}, but was {board_state.shape}")
         self._board_state = board_state
+        self._board_validity = self._check_board_validity()
 
     def __str__(self) -> str:
         return str(self._board_state)
@@ -30,9 +33,8 @@ class SudokuBoard:
     def _max_row_sum(self) -> int:
         return np.sum(self._allowed_numbers)
 
-    @property
-    def state_is_valid(self) -> bool:
-        result = False
+    def _check_board_validity(self) -> Dict:
+        """Perform a variety of checks and update board_validity variable"""
         max_sum = self._max_row_sum
         # # check rows are valid
 
@@ -76,9 +78,7 @@ class SudokuBoard:
         boxes_have_no_duplicates = []
         boxes_have_only_allowed_values = []
 
-        box_shape = (3, 3)  # could compute from self._board_shape
-        box_h, box_w = (3, 3)
-        num_box_rows = 3
+        num_box_rows = 3  # NOTE these are not dynamically set
         num_box_cols = 3
         for box_row_id in range(num_box_rows):
             for box_col_id in range(num_box_cols):
@@ -103,22 +103,23 @@ class SudokuBoard:
                 boxes_have_no_duplicates.append(no_duplicates)
                 boxes_have_only_allowed_values.append(only_allowed_values)
 
-        ## check that all is well
-        result = bool(
-            np.all(
-                [
-                    rows_sum_within_range,
-                    rows_have_only_allowed_values,
-                    rows_have_no_duplicates,
-                    cols_sum_within_range,
-                    cols_have_only_allowed_values,
-                    cols_have_no_duplicates,
-                    boxes_sum_within_range,
-                    boxes_have_only_allowed_values,
-                    boxes_have_no_duplicates,
-                ],
-            )
-        )
+        return {
+            "rows_sum_within_range": rows_sum_within_range,
+            "rows_have_no_duplicates": rows_have_no_duplicates,
+            "rows_have_only_allowed_values": rows_have_only_allowed_values,
+            "cols_sum_within_range": cols_sum_within_range,
+            "cols_have_no_duplicates": cols_have_no_duplicates,
+            "cols_have_only_allowed_values": cols_have_only_allowed_values,
+            "boxes_sum_within_range": boxes_sum_within_range,
+            "boxes_have_no_duplicates": boxes_have_no_duplicates,
+            "boxes_have_only_allowed_values": boxes_have_only_allowed_values,
+        }
+
+    @property
+    def state_is_valid(self) -> bool:
+        self._board_validity = self._check_board_validity()
+
+        result = bool(np.all(list(self._board_validity.values())))
 
         return result
 
