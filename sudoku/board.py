@@ -128,3 +128,6 @@ class SudokuBoard:
         values_sum_is_correct = np.sum(self._board_state) == (self._max_row_sum * self.num_rows)
         result = values_sum_is_correct and self.state_is_valid
         return result
+
+    def board_state_numpy(self) -> np.ndarray:
+        return self._board_state.copy()
