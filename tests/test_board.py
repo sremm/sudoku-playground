@@ -36,6 +36,10 @@ class TestBoardState:
         board = SudokuBoard(np.ones((9, 9)))
         assert board.state_is_valid == False
 
+    def test_zeros_allowed_as_duplicates(self):
+        board = SudokuBoard(np.zeros((9, 9)))
+        assert board.state_is_valid
+
     def test_state_is_invalid_square_constraint_not_fulfilled(self):
         board = SudokuBoard(
             np.array(
