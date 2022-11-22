@@ -1,5 +1,5 @@
 """ Includes the definition for the game board """
-from typing import Dict
+from typing import Dict, Tuple
 
 import numpy as np
 
@@ -7,6 +7,12 @@ import numpy as np
 class BoardShapeError(Exception):
     pass
 
+def _discard_empty_field_values_and_counts(empty_field_value: int, values: np.ndarray, counts: np.ndarray) -> Tuple[np.ndarray,np.ndarray]:
+    if empty_field_value in values:
+        non_empty_value_idx = values != empty_field_value
+        values = values[non_empty_value_idx]
+        counts = counts[non_empty_value_idx]
+    return values, counts
 
 class SudokuBoard:
     _allowed_board_shape = (9, 9)
@@ -43,16 +49,23 @@ class SudokuBoard:
         rows_have_no_duplicates = []
         rows_have_only_allowed_values = []
         for idx in range(9):
-            only_allowed_values = True
-            no_duplicates = True
             row = self._board_state[idx, :]
             values, counts = np.unique(row, return_counts=True)
+            values, counts = _discard_empty_field_values_and_counts(empty_field_value=self._empty_field_value,values=values, counts=counts)
+
+
+            # only allowed values
+            only_allowed_values = True
             for val in values:
                 if val not in self._allowed_numbers:
                     only_allowed_values == False
                     break
+
+            # no duplicates
+            no_duplicates = True
             if np.all(counts == 1) == False:
                 no_duplicates = False
+
             rows_have_only_allowed_values.append(only_allowed_values)
             rows_have_no_duplicates.append(no_duplicates)
 
@@ -65,6 +78,7 @@ class SudokuBoard:
             no_duplicates = True
             col = self._board_state[:, idx]
             values, counts = np.unique(col, return_counts=True)
+            values, counts = _discard_empty_field_values_and_counts(empty_field_value=self._empty_field_value,values=values, counts=counts)
             for val in values:
                 if val not in self._allowed_numbers:
                     only_allowed_values == False
@@ -93,6 +107,7 @@ class SudokuBoard:
                 box_sum_within_range = np.sum(box_values) <= max_sum
 
                 values, counts = np.unique(box_values, return_counts=True)
+                values, counts = _discard_empty_field_values_and_counts(empty_field_value=self._empty_field_value,values=values, counts=counts)
                 for val in values:
                     if val not in self._allowed_numbers:
                         only_allowed_values == False
