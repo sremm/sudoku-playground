@@ -51,8 +51,7 @@ class SudokuBoard:
         rows_have_only_allowed_values = []
         for idx in range(9):
             row = self._board_state[idx, :]
-            values, counts = np.unique(row, return_counts=True)
-            values, counts = _discard_empty_field_values_and_counts(empty_field_value=self._empty_field_value,values=values, counts=counts)
+            values, counts = self._get_allowed_non_empty_field_values_and_counts(input_values= row)
 
             only_allowed_values = self._has_only_allowed_values(values)
             rows_have_only_allowed_values.append(only_allowed_values)
@@ -66,8 +65,7 @@ class SudokuBoard:
         cols_have_only_allowed_values = []
         for idx in range(9):
             col = self._board_state[:, idx]
-            values, counts = np.unique(col, return_counts=True)
-            values, counts = _discard_empty_field_values_and_counts(empty_field_value=self._empty_field_value,values=values, counts=counts)
+            values, counts = self._get_allowed_non_empty_field_values_and_counts(input_values= col)
 
             only_allowed_values = self._has_only_allowed_values(values)
             cols_have_only_allowed_values.append(only_allowed_values)
@@ -89,9 +87,7 @@ class SudokuBoard:
                     box_row_id * num_box_rows : (box_row_id + 1) * num_box_rows,
                     box_col_id * num_box_cols : (box_col_id + 1) * num_box_cols,
                 ]
-
-                values, counts = np.unique(box_values, return_counts=True)
-                values, counts = _discard_empty_field_values_and_counts(empty_field_value=self._empty_field_value,values=values, counts=counts)
+                values, counts = self._get_allowed_non_empty_field_values_and_counts(input_values= box_values)
 
                 box_sum_within_range = np.sum(box_values) <= max_sum
                 boxes_sum_within_range.append(box_sum_within_range)
@@ -113,7 +109,12 @@ class SudokuBoard:
             "boxes_have_no_duplicates": boxes_have_no_duplicates,
             "boxes_have_only_allowed_values": boxes_have_only_allowed_values,
         }
+    
 
+    def _get_allowed_non_empty_field_values_and_counts(self, input_values: np.ndarray) -> Tuple:
+        values, counts = np.unique(input_values, return_counts=True)
+        values, counts = _discard_empty_field_values_and_counts(empty_field_value=self._empty_field_value,values=values, counts=counts)
+        return values, counts
 
     def _has_only_allowed_values(self, values:np.ndarray) -> bool:
         only_allowed_values = True
