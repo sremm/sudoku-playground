@@ -21,16 +21,23 @@ class SudokuSolver:
             board_state = original_board_state.copy()
 
             empty_slots = np.where(board_state == 0)
-            for row, col in zip(empty_slots[0], empty_slots[1]):
-                # test values
+            if len(empty_slots) > 0:
+                row, col = empty_slots[0][0], empty_slots[0][1]
+                
                 for value in valid_values:
                     new_state = board_state.copy()
                     new_state[row, col] = value
                     new_board = SudokuBoard(new_state)
                     if new_board.state_is_valid == True:
-                        board_state = new_state
+                        new_board, recursion_message = SudokuSolver.solve(new_board)
+                        new_state = new_board.board_state_numpy()
                         continue
-            current_board = SudokuBoard(board_state)
+                    else:
+                        new_state[row,col] = 0
+                    board_state = new_state
+                current_board = SudokuBoard(board_state)
+            else:
+                current_board = SudokuBoard(board_state)
             if current_board.is_solved:
                 result_board = current_board
                 message = "Found a solution"
